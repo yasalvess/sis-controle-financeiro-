@@ -79,17 +79,40 @@ def exibirDespesas(despesa):
     else:
         return 'Não há despesas cadastradas! '
 
+
+def calcularMediaEconomia(tempoMeta, valorMeta):
+    media = valorMeta / tempoMeta if tempoMeta > 0 else 0
+    #return "{:.1f}".format(media)
+    return round(media, 1)
+
+def valorTotalMetas(metas):
+    if 'media_mensal' in metas.columns:
+        valores_media_mensal = metas['media_mensal'].apply(lambda x: float(x.replace(',', '.')))
+        valor_total_metas = sum(valores_media_mensal)
+        return "{:.1f}".format(valor_total_metas).replace('.', ',')
+    else:
+        return 'A coluna "media_mensal" não está no df metas'
+
+    
 def exibirMetas(metas):
     if not metas.empty:
         tabela = PrettyTable()
-        tabela.field_names = ["nomeMeta", "tempoMeta", "valorMeta"]  
+        tabela.field_names = ["Nome", "Meses", "Valor", "Média"]  
         
-        for metas in metas.itertuples(index=False, name=None):
-            tabela.add_row(metas[1:])  #ignorando o indice do data frame
+        valores_media_mensal = []
         
-            print(tabela)
-        else:
-            print('Não há despesas cadastradas! ')
+        for metas in metas.itertuples(index=False):
+            nomeMeta, tempoMeta, valorMeta = metas[1], metas[2], metas[3]
+            media_mensal = calcularMediaEconomia(tempoMeta, valorMeta)
+            valores_media_mensal.append(media_mensal)
+            tabela.add_row([nomeMeta, tempoMeta, valorMeta, media_mensal])
+     
+        print(tabela)
+            
+        valor_total_metas = sum(valores_media_mensal)
+        print(f'\nValor total a ser guardado por mês: {valor_total_metas}')
+    else:
+        print('Não há metas cadastradas!')
         
 def despesaMensal():
     
@@ -114,8 +137,6 @@ def despesaMensal():
     print('\n+----------------------------------------+')
     print(f'|Valor total das despesas do mês: {valor_total}|')
     print('+----------------------------------------+')
-
-
 
 def exibirMenu():
     print('\n')
@@ -149,7 +170,7 @@ if 'y' == 'y':
             
             op = '1'
             
-            while op == '1':
+            while op == '1' or 'sim':
                 limpaTerminal()
                 
                 print('Você escolheu cadastrar!\n')
@@ -161,18 +182,33 @@ if 'y' == 'y':
                 valorTotal = (input('Digite o valor total: '))
                 cadastrarDespesa(nomeDespesa, tipoDespesa, qtdXDespesa, valorParcela, valorTotal)
                 op = input('Deseja cadastrar outra despesa? ')
+                if op.lower != 'sim':
+                    break
+                else:
+                    continue
             else:
                 limpaTerminal()
                 pass
         elif operacao == '2':
+            
+            op = '2'
+            while op == '2' or 'sim':
+                limpaTerminal()
                         
-            limpaTerminal()
-            print('Você escolheu a opção CADASTRAR METAS!')
-            nomeMeta = input('Nome da meta: ')
-            tempoMeta = int(input('Duração da meta: '))
-            valorMeta = float(input('Valor da meta: '))
-            cadastrarMetas(nomeMeta, tempoMeta, valorMeta)
-            op = input('Deseja cadastrar outra meta? ')
+                limpaTerminal()
+                print('Você escolheu a opção CADASTRAR METAS!')
+                nomeMeta = input('Nome da meta: ')
+                tempoMeta = int(input('Duração da meta: '))
+                valorMeta = float(input('Valor da meta: '))
+                cadastrarMetas(nomeMeta, tempoMeta, valorMeta)
+                op = input('Deseja cadastrar outra meta? (Digite "sim" ou "nao"): ')
+                if op.lower != 'sim':
+                    break
+                else:
+                    continue
+            else:
+                limpaTerminal()
+                pass
 
         elif operacao == '3':
             limpaTerminal()
