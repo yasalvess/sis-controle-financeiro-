@@ -20,14 +20,14 @@ try:
                         idDespesa INTEGER PRIMARY KEY AUTOINCREMENT,
                         nomeDespesa TEXT NOT NULL,
                         tipoDespesa TEXT CHECK(tipoDespesa IN('Fixa', 'Variavel')) NOT NULL,  
-                        qtdXDespesa INTEGER NOT NULL,
-                        valorParcela REAL NOT NULL,    
+                        qtdXDespesa INTEGER,
+                        valorParcela REAL,    
                         valorTotal REAL NOT NULL
                         )
         
     
     ''')
-
+    
     #CRIAR TABELA DE METAS------------------------------------------------
     conexaoCursor.execute('''
     CREATE TABLE IF NOT EXISTS metas(
@@ -147,6 +147,8 @@ def exibirMenu():
     print('| [3] - EXIBIR DESPESAS                           |')
     print('| [4] - EXIBIR METAS                              |')
     print('| [5] - EXIBIR FATURA MENSAL                      |')
+    print('| [6] - DELETAR DESPESA                           |')
+    print('| [7] - DELETAR META                              |')
     print('|                                                 |')
     print('---------------------------------------------------')
     
@@ -175,10 +177,9 @@ if 'y' == 'y':
                 
                 print('Você escolheu cadastrar!\n')
                 nomeDespesa = input('Nome: ').capitalize()
-                tipoDespesa = input('Tipo: ')
+                tipoDespesa = input('Tipo: ').capitalize()
                 qtdXDespesa = int(input('Quantidades de parcelas: '))
-                if (qtdXDespesa > 1):
-                    valorParcela = (input('Digite o valor da parcela: '))
+                valorParcela = (input('Digite o valor da parcela: '))
                 valorTotal = (input('Digite o valor total: '))
                 cadastrarDespesa(nomeDespesa, tipoDespesa, qtdXDespesa, valorParcela, valorTotal)
                 op = input('Deseja cadastrar outra despesa? ')
