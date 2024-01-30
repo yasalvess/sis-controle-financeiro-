@@ -69,15 +69,13 @@ def exibirDespesas(despesa):
 
         # Certifique-se de que o DataFrame tem as colunas necessárias
         if set(["nomeDespesa", "tipoDespesa", "totalDespesa"]).issubset(despesa.columns):
-            for despesa in despesa.itertuples(index=False):
-                tabela.add_row(despesa)
+            for despesa_row in despesa.itertuples(index=False):
+                tabela.add_row(despesa_row)
             print(tabela)
-            print('DataFrame columns: {despesa.olumns}')
-        else:
-            return 'O DataFrame não tem as colunas necessárias para exibição!'
-            print('DataFrame columns: {despesa.olumns}')
+            #print(f"DataFrame columns: {despesa.columns}" )
+            
     else:
-        return 'Não há despesas cadastradas! '
+        print('Não há despesas cadastradas! ')
 
 
 def calcularMediaEconomia(tempoMeta, valorMeta):
@@ -107,7 +105,7 @@ def exibirMetas(metas):
             valores_media_mensal.append(media_mensal)
             tabela.add_row([nomeMeta, tempoMeta, valorMeta, media_mensal])
      
-        print(tabela)
+            print(tabela)
             
         valor_total_metas = sum(valores_media_mensal)
         print(f'\nValor total a ser guardado por mês: {valor_total_metas}')
@@ -138,6 +136,16 @@ def despesaMensal():
     print(f'|Valor total das despesas do mês: {valor_total}|')
     print('+----------------------------------------+')
 
+def deletarDespesa(idDespesa):
+    conexaoCursor.execute('DELETE FROM despesa WHERE idDespesa = ?', (idDespesa,))
+    conexao.commit()
+    print('Depesa deletada com sucesso!')
+    
+def deletarMetas(idMetas):
+    conexaoCursor.execute('DELETE FROM metas WHERE idMetas = ?', (idMetas,))
+    conexao.commit()
+    print('Meta deletada com sucesso!')
+    
 def exibirMenu():
     print('\n')
     print('---------------------DESPESAS----------------------')
@@ -149,6 +157,7 @@ def exibirMenu():
     print('| [5] - EXIBIR FATURA MENSAL                      |')
     print('| [6] - DELETAR DESPESA                           |')
     print('| [7] - DELETAR META                              |')
+    print('| [8] - SIMULAR RENDIMENTO                        |')
     print('|                                                 |')
     print('---------------------------------------------------')
     
@@ -230,3 +239,17 @@ if 'y' == 'y':
             print('Você escolheu EXIBIR FATURA MENSAL!')
             df_despesa_mensal = despesaMensal()
             print(df_despesa_mensal)
+            
+        elif operacao == '6':
+            limpaTerminal()
+            print('Você escolheu DELETAR DESPESA!')
+            print(dataFrameDespesa)
+            id_despesa = input('Digite o ID para excluir: ')
+            deletarDespesa(id_despesa)
+
+        elif operacao == '7':
+            limpaTerminal()
+            print('Você escolheu DELETAR METAS: ')
+            print(dataFrameMetas)
+            id_meta = input('Selecione o ID para deletar meta: ')
+            deletarMetas(id_meta)
